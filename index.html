@@ -4,573 +4,311 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Budget Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary: #475569;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --transition: all 0.3s ease;
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #333;
+            --background-color: #f5f5f5;
+            --container-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        
+
         body {
-            background-color: var(--gray-100);
-            color: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: var(--background-color);
         }
         
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 0;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header-content h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            padding: 1.5rem 0;
-        }
-        
-        @media (min-width: 768px) {
-            .main-content {
-                grid-template-columns: 300px 1fr;
-            }
-        }
-        
-        .sidebar {
             background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-        
-        .overview-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .card {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-        }
-        
-        .card-title {
-            font-size: 1rem;
-            color: var(--secondary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .card-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .income {
-            color: var(--success);
-        }
-        
-        .expense {
-            color: var(--danger);
-        }
-        
-        .total {
-            color: var(--primary);
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 0.25rem;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-        
-        .sidebar-nav {
-            list-style: none;
-            margin-top: 1.5rem;
-        }
-        
-        .sidebar-nav li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            color: var(--secondary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background-color: var(--gray-100);
-            color: var(--primary);
-        }
-        
-        .sidebar-nav a i {
-            margin-right: 0.5rem;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .transactions-list {
-            margin-top: 1.5rem;
-        }
-        
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-        
-        .transaction-details {
-            display: flex;
-            align-items: center;
-        }
-        
-        .category-icon {
-            width: 36px;
-            height: 36px;
-            background-color: var(--gray-200);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-        }
-        
-        .transaction-info h4 {
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        .transaction-info span {
-            font-size: 0.75rem;
-            color: var(--gray-400);
-        }
-        
-        .transaction-amount {
-            font-weight: 500;
-        }
-        
-        .transaction-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .action-btn {
-            background-color: transparent;
-            border: none;
-            color: var(--gray-400);
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: var(--transition);
-        }
-        
-        .action-btn:hover {
-            color: var(--primary);
+            border-radius: 12px;
+            box-shadow: var(--container-shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
         }
         
-        .form-label {
+        label {
             display: block;
-            margin-bottom: 0.25rem;
-            font-size: 0.875rem;
-            color: var(--secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
         }
         
-        .form-control {
+        input, select {
             width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            transition: var(--transition);
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
         }
-        
-        .form-control:focus {
+
+        input:focus, select:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Custom select arrow */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
         }
         
-        .form-select {
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
             width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 0.25rem;
-            background-color: white;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
         
-        .modal {
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #fff;
+            box-shadow: var(--container-shadow);
+            transition: transform 0.2s ease;
+        }
+        
+        .summary-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .income {
+            border-left: 5px solid var(--success-color);
+        }
+        
+        .expense {
+            border-left: 5px solid var(--danger-color);
+        }
+        
+        .balance {
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .delete-btn {
+            background-color: var(--danger-color);
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input {
+            border-color: var(--danger-color);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* Toast notification */
+        .toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
             z-index: 1000;
             opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
+            transition: opacity 0.3s ease;
         }
-        
-        .modal.active {
+
+        .toast.show {
             opacity: 1;
-            visibility: visible;
         }
         
-        .modal-content {
-            background-color: white;
-            border-radius: 0.5rem;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(-20px);
-            transition: var(--transition);
-        }
-        
-        .modal.active .modal-content {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        
-        .modal-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray-400);
-            transition: var(--transition);
-        }
-        
-        .modal-close:hover {
-            color: var(--danger);
-        }
-        
-        .modal-body {
-            padding: 1.5rem;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--gray-200);
-            gap: 0.5rem;
-        }
-        
-        .btn-secondary {
-            background-color: var(--gray-200);
-            color: var(--dark);
-        }
-        
-        .btn-secondary:hover {
-            background-color: var(--gray-300);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-        }
-        
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        
-        .tab-nav {
-            display: flex;
-            border-bottom: 1px solid var(--gray-300);
-            margin-bottom: 1.5rem;
-        }
-        
-        .tab-link {
-            padding: 0.75rem 1rem;
-            border-bottom: 2px solid transparent;
-            color: var(--secondary);
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        
-        .tab-link.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .chart-container {
-            height: 400px;
-            margin-top: 1.5rem;
-        }
-        
-        .alert {
-            padding: 0.75rem 1rem;
-            border-radius: 0.25rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .alert-warning {
-            background-color: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: var(--warning);
-        }
-        
-        .alert-warning i {
-            margin-right: 0.5rem;
-        }
-        
-        .categories-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        .category-card {
-            background-color: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .category-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .category-name {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .budget-progress {
-            margin-top: 0.5rem;
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background-color: var(--gray-200);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-value {
-            height: 100%;
-            border-radius: 3px;
-            background-color: var(--primary);
-            transition: var(--transition);
-        }
-        
-        .progress-value.warning {
-            background-color: var(--warning);
-        }
-        
-        .progress-value.danger {
-            background-color: var(--danger);
-        }
-        
-        .budget-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--gray-400);
-            margin-top: 0.25rem;
-        }
-        
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-        
-        .loading.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--gray-200);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s infinite linear;
-        }
-        
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .summary-item {
+                margin: 0;
+            }
+
+            /* Make table scrollable on mobile */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+
+            table {
+                min-width: 600px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            input, select, button {
+                font-size: 16px; /* Prevent zoom on iOS */
             }
         }
-        
-        .page {
-            display: none;
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #f0f0f0;
+                --background-color: #222831;
+                --container-bg: #393e46;
+                --input-bg: #454b54;
+                --border-color: #666;
+                --hover-color: #4a515c;
+                --table-header: #2d333b;
+                --table-border: #4a515c;
+            }
+
+            body {
+                background-color: var(--background-color);
+            }
+
+            .container, .summary-item {
+                background-color: var(--container-bg);
+                border: 1px solid var(--border-color);
+            }
+
+            h1, h2, h3, label {
+                color: var(--text-color);
+            }
+
+            input, select {
+                background-color: var(--input-bg);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            input::placeholder {
+                color: #aaa;
+            }
+
+            th {
+                background-color: var(--table-header);
+                color: var(--text-color);
+                border-bottom: 2px solid var(--table-border);
+            }
+
+            td {
+                border-bottom: 1px solid var(--table-border);
+            }
+
+            .toast {
+                background-color: var(--container-bg);
+                border: 1px solid var(--border-color);
+            }
+
+            button:hover {
+                background-color: var(--hover-color);
+            }
+
+            .delete-btn:hover {
+                background-color: #d63031;
+            }
         }
-        
-        .page.active {
-            display: block;
-        }
-        
-        #export-options {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .settings-section {
-            margin-bottom: 2rem;
-        }
-        
-        .settings-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-        
-        .notification-item {
+
+        /* Currency switcher styles */
+        .currency-switch {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--gray-200);
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        
-        .notification-info {
-            flex: 1;
-        }
-        
-        .notification-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-        
-        .notification-desc {
-            font-size: 0.875rem;
-            color: var(--gray-400);
-        }
-        
+
         .switch {
             position: relative;
             display: inline-block;
-            width: 48px;
-            height: 24px;
+            width: 60px;
+            height: 30px;
         }
-        
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-        
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -578,242 +316,378 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: var(--gray-300);
+            background-color: #ccc;
             transition: .4s;
-            border-radius: 24px;
+            border-radius: 30px;
         }
-        
+
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
-        
+
         input:checked + .slider {
-            background-color: var(--primary);
+            background-color: var(--primary-color);
         }
-        
+
         input:checked + .slider:before {
-            transform: translateX(24px);
+            transform: translateX(30px);
         }
-        
-        .sync-status {
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: var(--gray-400);
+
+        .currency-label {
+            font-weight: 600;
+            color: var(--text-color);
         }
-        
-        .date-range {
+
+        .current-currency {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Add new styles for features */
+        .toolbar {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        
-        .date-range .form-group {
+
+        .toolbar button {
+            width: auto;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .toolbar button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter input,
+        .search-filter select {
+            width: auto;
             flex: 1;
+            min-width: 200px;
         }
-        
-        @media (max-width: 768px) {
-            .date-range {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
+
+        .monthly-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
-        
-        .error-message {
-            color: var(--danger);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
+
+        .monthly-card {
+            background: var(--container-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .monthly-card h4 {
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        /* File input styling */
+        .file-input {
+            display: none;
+        }
+
+        .backup-restore {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Add new styles for navigation tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--primary-color);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <header>
+    <h1>Personal Budget Tracker</h1>
+    
+    <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="main">Dashboard</button>
+        <button class="nav-tab" data-tab="management">Data Management</button>
+        <button class="nav-tab" data-tab="budget">Budget Planning</button>
+    </div>
+
+    <div id="main-tab" class="tab-content active">
         <div class="container">
-            <div class="header-content">
-                <h1>Personal Budget Tracker</h1>
-                <button id="sync-btn" class="btn">
-                    <i class="fas fa-sync-alt"></i> Sync
-                </button>
+            <div class="currency-switch">
+                <span class="currency-label">USD</span>
+                <label class="switch">
+                    <input type="checkbox" id="currency-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="currency-label">JPY</span>
+                <span class="current-currency" id="current-currency">Current: USD</span>
+            </div>
+
+            <div class="toolbar">
+                <button id="export-btn">Export Data</button>
+                <button id="import-btn">Import Data</button>
+                <input type="file" id="import-file" class="file-input" accept=".json">
+                <button id="view-monthly">Monthly View</button>
+                <button id="view-transactions" style="display: none;">Transaction View</button>
+            </div>
+
+            <div class="search-filter">
+                <input type="text" id="search" placeholder="Search transactions...">
+                <select id="filter-type">
+                    <option value="all">All Types</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <select id="filter-category">
+                    <option value="all">All Categories</option>
+                </select>
+                <input type="month" id="filter-month">
             </div>
         </div>
-    </header>
-    
-    <div class="container">
-        <div class="main-content">
-            <div class="sidebar">
-                <button id="add-transaction-btn" class="btn btn-block">
-                    <i class="fas fa-plus"></i> Add Transaction
-                </button>
-                <ul class="sidebar-nav">
-                    <li><a href="#" class="nav-link active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#" class="nav-link" data-page="transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
-                    <li><a href="#" class="nav-link" data-page="add-transaction"><i class="fas fa-plus"></i> Add Transaction</a></li>
-                    <li><a href="#" class="nav-link" data-page="categories"><i class="fas fa-tags"></i> Categories</a></li>
-                    <li><a href="#" class="nav-link" data-page="reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
-                    <li><a href="#" class="nav-link" data-page="export"><i class="fas fa-file-export"></i> Export</a></li>
-                    <li><a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i> Settings</a></li>
-                </ul>
+        
+        <div class="container">
+            <h2>Add Transaction</h2>
+            <form id="transaction-form" novalidate>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" placeholder="What was this transaction for?" required>
+                    <div class="error-message">Please enter a description</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" placeholder="Enter amount" min="0.01" step="0.01" required>
+                    <div class="error-message">Please enter a valid amount greater than 0</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="type">Type</label>
+                    <select id="type" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="salary">Salary</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="housing">Housing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                    <div class="error-message">Please select a date</div>
+                </div>
+                
+                <button type="submit" id="add-btn">Add Transaction</button>
+            </form>
+        </div>
+        
+        <div class="container">
+            <h2>Summary</h2>
+            <div class="summary">
+                <div class="summary-item income">
+                    <h3>Income</h3>
+                    <p id="total-income">$0.00</p>
+                </div>
+                <div class="summary-item expense">
+                    <h3>Expenses</h3>
+                    <p id="total-expenses">$0.00</p>
+                </div>
+                <div class="summary-item balance">
+                    <h3>Balance</h3>
+                    <p id="balance">$0.00</p>
+                </div>
             </div>
-            
-            <div class="content">
-                <!-- Dashboard Page -->
-                <div id="dashboard-page" class="page active">
-                    <div class="overview-cards">
-                        <div class="card">
-                            <h3 class="card-title">Total Income</h3>
-                            <div id="total-income" class="card-value income">$0.00</div>
-                        </div>
-                        <div class="card">
-                            <h3 class="card-title">Total Expenses</h3>
-                            <div id="total-expenses" class="card-value expense">$0.00</div>
-                        </div>
-                        <div class="card">
-                            <h3 class="card-title">Balance</h3>
-                            <div id="total-balance" class="card-value total">$0.00</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h3 class="card-title">Monthly Overview</h3>
-                        <div class="chart-container">
-                            <canvas id="monthly-overview-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Transactions Page -->
-                <div id="transactions-page" class="page">
-                    <div class="card">
-                        <h3 class="card-title">Recent Transactions</h3>
-                        <div id="transactions-list" class="transactions-list">
-                            <!-- Transactions will be added here dynamically -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Add Transaction Page -->
-                <div id="add-transaction-page" class="page">
-                    <div class="card">
-                        <h3 class="card-title">Add New Transaction</h3>
-                        <form id="add-transaction-form">
-                            <div class="form-group">
-                                <label class="form-label" for="transaction-type">Type</label>
-                                <select class="form-select" id="transaction-type" required>
-                                    <option value="">Select Type</option>
-                                    <option value="income">Income</option>
-                                    <option value="expense">Expense</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="transaction-category">Category</label>
-                                <select class="form-select" id="transaction-category" required>
-                                    <option value="">Select Category</option>
-                                    <optgroup label="Income">
-                                        <option value="salary">Salary</option>
-                                        <option value="freelance">Freelance</option>
-                                        <option value="investments">Investments</option>
-                                    </optgroup>
-                                    <optgroup label="Expenses">
-                                        <option value="food">Food</option>
-                                        <option value="transport">Transport</option>
-                                        <option value="utilities">Utilities</option>
-                                        <option value="entertainment">Entertainment</option>
-                                        <option value="shopping">Shopping</option>
-                                        <option value="health">Health</option>
-                                        <option value="other">Other</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="transaction-amount">Amount</label>
-                                <input type="number" class="form-control" id="transaction-amount" min="0" step="0.01" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="transaction-description">Description</label>
-                                <input type="text" class="form-control" id="transaction-description" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="transaction-date">Date</label>
-                                <input type="date" class="form-control" id="transaction-date" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-block">Add Transaction</button>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- Edit Transaction Modal -->
-                <div id="edit-transaction-modal" class="modal">
-                    <div class="modal-content">
-                        <h3>Edit Transaction</h3>
-                        <form id="edit-transaction-form">
-                            <input type="hidden" id="edit-transaction-id">
-                            <div class="form-group">
-                                <label class="form-label" for="edit-transaction-type">Type</label>
-                                <select class="form-select" id="edit-transaction-type" required>
-                                    <option value="income">Income</option>
-                                    <option value="expense">Expense</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="edit-transaction-category">Category</label>
-                                <select class="form-select" id="edit-transaction-category" required>
-                                    <option value="">Select Category</option>
-                                    <optgroup label="Income">
-                                        <option value="salary">Salary</option>
-                                        <option value="freelance">Freelance</option>
-                                        <option value="investments">Investments</option>
-                                    </optgroup>
-                                    <optgroup label="Expenses">
-                                        <option value="food">Food</option>
-                                        <option value="transport">Transport</option>
-                                        <option value="utilities">Utilities</option>
-                                        <option value="entertainment">Entertainment</option>
-                                        <option value="shopping">Shopping</option>
-                                        <option value="health">Health</option>
-                                        <option value="other">Other</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="edit-transaction-amount">Amount</label>
-                                <input type="number" class="form-control" id="edit-transaction-amount" min="0" step="0.01" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="edit-transaction-description">Description</label>
-                                <input type="text" class="form-control" id="edit-transaction-description" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="edit-transaction-date">Date</label>
-                                <input type="date" class="form-control" id="edit-transaction-date" required>
-                            </div>
-
-                            <div class="modal-actions">
-                                <button type="submit" class="btn">Save Changes</button>
-                                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        </div>
+        
+        <div class="container">
+            <h2>Transactions</h2>
+            <div class="table-container">
+                <table id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-body"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
+    <div id="management-tab" class="tab-content">
+        <div class="container">
+            <h2>Data Management</h2>
+            <div class="toolbar">
+                <button id="export-btn">Export Data</button>
+                <button id="import-btn">Import Data</button>
+                <input type="file" id="import-file" class="file-input" accept=".json">
+            </div>
+            <div id="monthly-container">
+                <h2>Monthly Overview</h2>
+                <div class="monthly-view" id="monthly-view"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="budget-tab" class="tab-content">
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" data-tab="budget-goals">Budget Goals</div>
+                <div class="tab" data-tab="recurring">Recurring Transactions</div>
+            </div>
+
+            <div id="budget-goals-section">
+                <h2>Budget Goals</h2>
+                <form id="goal-form">
+                    <div class="form-group">
+                        <label for="goal-category">Category</label>
+                        <select id="goal-category" required>
+                            <option value="food">Food & Dining</option>
+                            <option value="transportation">Transportation</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="housing">Housing</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-amount">Monthly Limit</label>
+                        <input type="number" id="goal-amount" min="0" step="0.01" required placeholder="Enter monthly limit">
+                    </div>
+                    <button type="submit">Set Budget Goal</button>
+                </form>
+                <div class="budget-goals" id="goals-list"></div>
+            </div>
+
+            <div id="recurring-section" style="display: none;">
+                <h2>Recurring Transactions</h2>
+                <form id="recurring-form">
+                    <div class="form-group">
+                        <label for="recurring-description">Description</label>
+                        <input type="text" id="recurring-description" required placeholder="Enter description">
+                    </div>
+                    <div class="form-group">
+                        <label for="recurring-amount">Amount</label>
+                        <input type="number" id="recurring-amount" min="0" step="0.01" required placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="recurring-type">Type</label>
+                        <select id="recurring-type" required>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurring-category">Category</label>
+                        <select id="recurring-category" required>
+                            <option value="salary">Salary</option>
+                            <option value="food">Food & Dining</option>
+                            <option value="transportation">Transportation</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="housing">Housing</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurring-frequency">Frequency</label>
+                        <select id="recurring-frequency" required>
+                            <option value="monthly">Monthly</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recurring-start">Start Date</label>
+                        <input type="date" id="recurring-start" required>
+                    </div>
+                    <button type="submit">Add Recurring Transaction</button>
+                </form>
+                <div id="recurring-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
