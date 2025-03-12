@@ -18,6 +18,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Add Transaction Button Click Handler
+  document.getElementById('add-transaction-btn').addEventListener('click', function() {
+    // Remove active class from all nav links and pages
+    document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    
+    // Show add transaction page
+    document.getElementById('add-transaction-page').classList.add('active');
+    
+    // Update nav link
+    document.querySelector('[data-page="add-transaction"]').classList.add('active');
+  });
+
   // Initialize charts
   const ctx = document.getElementById('monthly-overview-chart').getContext('2d');
   new Chart(ctx, {
